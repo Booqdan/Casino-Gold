@@ -1,0 +1,13 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+    <h1 class="middleh">Witaj użytkowniku</h1>
+
+    <h3 class="middleh">Wybierz gre:</h3>
+    <br>
+
+
+
+
+    <a class="center" href="{{ path('casinogold_user_blackjack') }}"><img src="{{ asset('photos/bjgame.jpg') }}"></a>
+{% endblock fos_user_content %}

@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
         <meta charset="UTF-8" />
     </head>
-    <body>
+    <body style="background-image:url('{{ asset('photos/casino-gambling_00242498.jpg') }}');
+    background-repeat: no-repeat;
+    background-size: 100% 18cm;">
+
         <div>
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                 {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
@@ -13,6 +17,16 @@
                  | <a href="{{ path('fos_user_profile_show') }}">
                 Your Account
                 </a>
+                 | <a href="{{ path('casinogold_user_showallusers') }}">
+                Admin Panel
+                </a>
+                 | <a href="{{ path('casinogold_user_games') }}">
+                    Game List
+                </a>
+                 | <a href="{{ path('cash_new') }}">
+                Add Cash
+            </a>
+
             {% else %}
                 <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
                 | <a href="{{ path('fos_user_registration_register') }}">Register</a>
@@ -22,7 +36,7 @@
         {% if app.request.hasPreviousSession %}
             {% for type, messages in app.session.flashbag.all() %}
                 {% for message in messages %}
-                    <div class="flash-{{ type }}">
+                    <div class="flash-{{ type }}" >
                         {{ message }}
                     </div>
                 {% endfor %}

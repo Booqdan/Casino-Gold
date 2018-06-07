@@ -1,0 +1,26 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+    {% for user  in user %}
+        <div style="width: 300px; display: inline-block; float: left; margin: 25px 25px">
+
+            <h2>Name:
+                <a href="{{ path('casinogold_user_showone',{'id': user.id }) }}">{{ user.username }}</a>
+            </h2>
+            <h3>Email: {{ user.email }}</h3>
+            <p>Role:
+                {% if user.roles|first == "ROLE_ADMIN" %}
+                    ADMIN
+                {% else %}
+                    USER
+                {% endif %}
+            </p>
+        </div>
+
+
+    {% else %}
+
+
+    {% endfor %}
+{% endblock fos_user_content %}
+

@@ -1,0 +1,26 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+    <h1>Your Payment</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Cash</th>
+                <td>{{ cash.cash }}</td>
+            </tr>
+            <tr>
+                <th>Currency</th>
+                <td>{{ cash.currency }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('cash_index') }}">Back to the list</a>
+        </li>
+
+
+    </ul>
+{% endblock fos_user_content %}
