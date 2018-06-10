@@ -9,5 +9,21 @@ div {
     margin-left: auto;
     margin-right: auto;
     width: 30%;
-
+}
+.divcard{
+    background-repeat: no-repeat;
+    background-size: 100px 150px;
+    width :100px;
+    height: 150px;
+    float: left;">
+}
+.divnumbercard{
+    color: #000000;
+    padding-top: 37px;
+    width: 100px;
+    height: 26px;
+}
+.h1card{
+    vertical-align:middle;
+    text-align: center;
 }

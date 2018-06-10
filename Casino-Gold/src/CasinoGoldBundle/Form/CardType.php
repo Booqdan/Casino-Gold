@@ -3,29 +3,26 @@
 namespace CasinoGoldBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CashType extends AbstractType
+class CardType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
-        $builder->add('cash')
-            ->add('currency',ChoiceType::class, array(
-                'choices' => ['PLN' => 'PLN']
-            ));
+        $builder->add('name')
+            ->add('value')
+            ->add('card', null, ['choice_label' => 'Name']);
     }/**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'CasinoGoldBundle\Entity\Cash'
+            'data_class' => 'CasinoGoldBundle\Entity\Card'
         ));
     }
 
@@ -34,7 +31,7 @@ class CashType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'casinogoldbundle_cash';
+        return 'casinogoldbundle_card';
     }
 
 

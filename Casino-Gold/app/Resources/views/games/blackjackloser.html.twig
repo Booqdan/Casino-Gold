@@ -1,0 +1,31 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+<h1>Karty krupiera</h1>
+    <div style="display: inline-block">
+        {% for card in cardsk %}
+
+        <div class="divcard" style="background-image:url('{{ asset("photos/" ~ card.card.name ~ ".jpg") }}');">
+            <div class="divnumbercard"><h1 class="h1card">{{ card.name }}</h1></div>
+        </div>
+        {% endfor %}
+
+    </div>
+    <h2>Wartość kart krupiera: {{ scorekrupier }}  </h2>
+
+<h1>Twoje karty</h1>
+<div style="display: inline-block">
+
+    {% for card in cardsg %}
+        <div class="divcard" style="background-image:url('{{ asset("photos/" ~ card.card.name ~ ".jpg") }}');">
+            <div class="divnumbercard"><h1 class="h1card">{{ card.name }}</h1></div>
+        </div>
+    {% endfor %}
+    <h2>Wartość twoich kart: {{ scoregracz }}  </h2>
+    <br>
+    <h1>Krupier Ma Wiecej Oczek! PRZEGRYWASZ!</h1>
+    <br>
+    <a href="{{ path('game') }}">pass</a>
+
+    {% endblock %}
+

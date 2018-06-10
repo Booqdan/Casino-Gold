@@ -134,6 +134,7 @@ class UserController extends Controller
         ;
     }
     /**
+     * wyswietlenie wybranego uzytkownika
      * @Route("/admin/user/{id}")
      */
     public function showOneAction(User $user, $id)
@@ -154,6 +155,7 @@ class UserController extends Controller
             'delete_form' => $deleteForm->createView()]);
     }
     /**
+     * wyswietlenie uzytkownikow przez admina
      * @Route("/admin/allusers")
      */
     public function showAllUsersAction()
@@ -166,24 +168,220 @@ class UserController extends Controller
         if(!$users){
             throw $this->createNotFoundException('There is no users');
         }
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'not Admin');
-
-        return $this->render('user/showall.html.twig', ['user' => $users]);
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->render('user/showall.html.twig', ['user' => $users]);
+        }else{
+            return $this->render('games/showgames.html.twig', ['user' => $users]);
+        }
     }
 
+
+
     /**
+     * wyswietlenie gier
      * @Route("/games")
      */
     public function gamesAction()
     {
         return $this->render('games/showgames.html.twig');
     }
+
     /**
-     * @Route("/games/blackjack")
+     * akcja dobierania kart przez gracza
+     * @Route("/games/blackjacknext", name="next")
      */
-    public function blackjackAction()
+    public function blackjackNextAction(Request $request)
     {
-        return $this->render('games/blackjack.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        $session = $this->get('session');
+
+        $cardSession = $session->get('cardsSession');
+
+        $cards = $em->getRepository('CasinoGoldBundle:Card')->findAll();
+
+        $randomKeyG = array_rand($cards, 1);
+        $cardG = $cards[$randomKeyG];
+
+        array_push($cardSession['gracz'], $cardG);
+
+        $session->set('cardsSession', [
+            'gracz' => $cardSession['gracz'],
+            'krupier' => $cardSession['krupier'],
+        ]);
+        $cardSession = $session->get('cardsSession');
+        $request->setSession($session);
+
+
+        $scoregracz = $this->scoreGamer($cardSession['gracz']);
+        $scoreKrupier = $this->scoreGamer($cardSession['krupier']);
+
+
+        if($scoregracz <= 20){
+            return $this->render('games/blackjacknext.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardG,
+                'session' => $cardSession,
+                'scoregracz' => $scoregracz,
+                'scorekrupier'=> $scoreKrupier,
+            ));
+        }else{
+            return $this->render('games/blackjacktomuch.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardG,
+                'session' => $cardSession,
+                'scoregracz' => $scoregracz,
+                'scorekrupier'=> $scoreKrupier,
+            ));
+        }
+    }
+
+    /**
+     * akcja rozpoczecia gry
+     * @Route("/games/black", name="game")
+     */
+
+    public function blackjackGameAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cards = $em->getRepository('CasinoGoldBundle:Card')->findAll();
+
+        $randomKeyK = array_rand($cards, 1);
+        $cardK = $cards[$randomKeyK];
+
+        unset($cards[$randomKeyK]);
+        $randomKeyG = array_rand($cards, 1);
+        $cardG = $cards[$randomKeyG];
+
+        unset($cards[$randomKeyG]);
+        $randomKeyG = array_rand($cards, 1);
+        $cardSecondG = $cards[$randomKeyG];
+
+        $krupierCards = [];
+        $graczCards = [];
+
+        array_push($krupierCards, $cardK);
+        array_push($graczCards, $cardG);
+        array_push($graczCards, $cardSecondG);
+
+        $session = $this->get('session');
+        $session->set('cardsSession', [
+            'krupier' => $krupierCards,
+            'gracz' => $graczCards,
+        ]);
+
+        $cardSession = $session->get('cardsSession');
+        $request->setSession($session);
+
+        $scoreGracz = $this->scoreGamer($graczCards);
+        $scoreKrupier = $this->scoreGamer($krupierCards);
+
+        if($scoreGracz <21){
+            return $this->render('games/blackjackloader.html.twig', array(
+                'cardk' => $cardSession['krupier'],
+                'cardg' => $cardSession['gracz'],
+                'scoregracz' => $scoreGracz,
+                'scorekrupier' => $scoreKrupier,
+            ));
+        }else{
+            return $this->render('games/blackjackBJWinner.html.twig', array(
+                'cardk' => $cardSession['krupier'],
+                'cardg' => $cardSession['gracz'],
+                'scoregracz' => $scoreKrupier,
+                'scorekrupier' => $scoreKrupier,
+
+            ));
+        }
 
     }
+    /**
+     * akcja dobierania kart przez krupiera
+     * @Route("/games/blackjacknextkrupier", name="nextkrupier")
+     */
+    public function blackjackNextKrupierAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $session = $this->get('session');
+
+        $cardSession = $session->get('cardsSession');
+
+        $cards = $em->getRepository('CasinoGoldBundle:Card')->findAll();
+
+        $randomKeyK = array_rand($cards, 1);
+        $cardK = $cards[$randomKeyK];
+
+        array_push($cardSession['krupier'], $cardK);
+
+        $session->set('cardsSession', [
+            'gracz' => $cardSession['gracz'],
+            'krupier' => $cardSession['krupier'],
+        ]);
+        $cardSession = $session->get('cardsSession');
+        $request->setSession($session);
+
+
+        $scoreKrupier = $this->scoreKrupier($cardSession['krupier']);
+        $scoreGracz = $this->scoreGamer($cardSession['gracz']);
+
+        if($scoreKrupier >21){
+            return $this->render('games/blackjackkrupierloser.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardK,
+                'session' => $cardSession,
+                'scorekrupier' => $scoreKrupier,
+                'scoregracz' => $scoreGracz,
+            ));
+        }elseif ($scoreKrupier < 17){
+            return $this->render('games/blackjacknext.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardK,
+                'session' => $cardSession,
+                'scorekrupier' => $scoreKrupier,
+                'scoregracz' => $scoreGracz,
+            ));
+        }elseif($scoreKrupier > 17 && $scoreKrupier > $scoreGracz){
+            return $this->render('games/blackjackkrupierwins.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardK,
+                'session' => $cardSession,
+                'scorekrupier' => $scoreKrupier,
+                'scoregracz' => $scoreGracz,
+            ));
+        }elseif($scoreKrupier > 17 && $scoreKrupier < $scoreGracz){
+            return $this->render('games/blackjackgamerwins.html.twig', array(
+                'cardsk' => $cardSession['krupier'],
+                'cardsg' => $cardSession['gracz'],
+                'cardnext' => $cardK,
+                'session' => $cardSession,
+                'scorekrupier' => $scoreKrupier,
+                'scoregracz' => $scoreGracz,
+            ));
+        }
+    }
+
+
+    private function scoreGamer($gamer)
+    {
+        $score = 0;
+        foreach ($gamer as $key=>$value){
+            $score += $value->getValue();
+        }
+        return $score;
+    }
+
+    private function scoreKrupier($krupier)
+    {
+        $score = 0;
+        foreach ($krupier as $key=>$value){
+            $score += $value->getValue();
+        }
+        return $score;
+    }
+
 }

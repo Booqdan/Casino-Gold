@@ -64,6 +64,7 @@ class Cash
     public function setCash($cash)
     {
         $this->cash = $cash;
+        $this->user->setPocket($this->user->getPocket() + $cash);
 
         return $this;
     }
@@ -114,7 +115,6 @@ class Cash
     public function setUser(\CasinoGoldBundle\Entity\User $user = null)
     {
         $this->user = $user;
-
         return $this;
     }
 

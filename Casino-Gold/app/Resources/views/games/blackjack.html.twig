@@ -1,14 +1,24 @@
 {% extends '@FOSUser/layout.html.twig' %}
 
 {% block fos_user_content %}
+    <h1>Karty krupiera</h1>
+    <div style="display: inline-block">
+        <div class="divcard" style="background-image:url('{{ asset("photos/" ~ cardk.card.name ~ ".jpg") }}');">
+            <div class="divnumbercard"><h1 class="h1card">{{ cardk.name }}</h1></div>
+        </div>
+    </div>
+    <h2>Wartość kart krupiera: {{ cardk.value }}  </h2>
 
-    Wybierz wartość - zacznij gre
-
-    wyswietlenie 1 karta krupier 2 karty gracz zapytanie czy dopierasz karte
-
-    zapytanie czy dobierasz karte
-
-    powtażaj jeżeli nie krupier dopiera karty
+    <h1>Twoje karty</h1>
+    <div style="display: inline-block">
+        <div class="divcard" style="background-image:url('{{ asset("photos/" ~ cardg.card.name ~ ".jpg") }}');">
+            <div class="divnumbercard"><h1 class="h1card">{{ cardg.name }}</h1></div>
+        </div>
+    </div>
+    {{ dump(app.session.get('cardsSession')) }}
+    <br>
+    <a href="{{ path('game') }}">dobierz</a>
+    <a href="{{ path('game') }}">pass</a>
 
 {% endblock %}
 

@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  */
 class CashController extends Controller
 {
+
     /**
      * Lists all cash entities.
      *
@@ -98,8 +99,6 @@ class CashController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
-
-
     /**
      * Deletes a cash entity.
      *

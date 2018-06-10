@@ -21,8 +21,6 @@ class User extends BaseUser
      *
      * @ORM\OneToMany(targetEntity="CasinoGoldBundle\Entity\Cash", mappedBy="User")
      */
-
-
     private $cash = [];
 
     /**
@@ -31,6 +29,22 @@ class User extends BaseUser
      */
 
     protected $pocket;
+
+    /**
+     * @return mixed
+     */
+    public function getPocket()
+    {
+        return $this->pocket;
+    }
+
+    /**
+     * @param mixed $pocket
+     */
+    public function setPocket($pocket)
+    {
+        $this->pocket = $pocket;
+    }
 
     /**
      * Constructor
@@ -76,6 +90,10 @@ class User extends BaseUser
         return $this->cash;
     }
 
+    /**
+     * Get AllCash
+     * @return int
+     */
     public function getAllCash()
     {
         $pocket = 0;
